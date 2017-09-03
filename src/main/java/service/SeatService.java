@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class SeatService {
 
+    ArrayList<Seat> reservedSeats;
     PriorityQueue<Seat> availableSeats;
     SeatHoldCache seatHoldCache;
     AtomicLong seatHoldCounter = new AtomicLong();
@@ -16,6 +17,7 @@ public class SeatService {
     public SeatService(int totalSeats){
         availableSeats = new PriorityQueue<Seat>(new SeatComparator());
         fillAvailableSeats(totalSeats);
+        reservedSeats = new ArrayList<Seat>();
         seatHoldCache = new SeatHoldCache(this);
     }
 
@@ -28,12 +30,20 @@ public class SeatService {
         }
     }
 
+    public int getNumReservedSeats(){
+        return reservedSeats.size();
+    }
+
     public int getNumAvailableSeats(){
         return availableSeats.size();
     }
 
-    public void addSeat(Seat s){
+    public void addAvailableSeat(Seat s){
        availableSeats.offer(s);
+    }
+
+    public void addReservedSeat(Seat s){
+        reservedSeats.add(s);
     }
 
     public ArrayList<Seat> getBestAvailableSeats(int numSeats){
@@ -57,5 +67,10 @@ public class SeatService {
         seatHoldCache.holdSeats(seatHold);
 
         return seatHold;
+    }
+
+    public boolean reserveSeat(int seatHoldId){
+
+        return seatHoldCache.removeAndReserveSeats(seatHoldId);
     }
 }

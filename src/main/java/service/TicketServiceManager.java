@@ -11,10 +11,16 @@ public class TicketServiceManager implements TicketService {
     }
 
     public SeatHold findAndHoldSeats(int numSeats, String customerEmail) {
-        return null;
+        return seatService.findAndHoldSeats(numSeats, customerEmail);
     }
 
     public String reserveSeats(int seatHoldId, String customerEmail) {
-        return null;
+
+        if(seatService.reserveSeat(seatHoldId)){
+           return "Reservation Code " + customerEmail + " " + seatHoldId;
+        } else {
+           //seats could not be reserved, most likely due to expiry
+           return "Could not reserve seats!";
+        }
     }
 }
