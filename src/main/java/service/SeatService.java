@@ -2,6 +2,7 @@ package service;
 
 import model.Seat;
 import model.SeatHold;
+import model.SeatStatus;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
@@ -39,10 +40,12 @@ public class SeatService {
     }
 
     public void addAvailableSeat(Seat s){
+       s.setStatus(SeatStatus.AVAILABLE);
        availableSeats.offer(s);
     }
 
     public void addReservedSeat(Seat s){
+        s.setStatus(SeatStatus.RESERVED);
         reservedSeats.add(s);
     }
 
@@ -72,5 +75,16 @@ public class SeatService {
     public boolean reserveSeat(int seatHoldId){
 
         return seatHoldCache.removeAndReserveSeats(seatHoldId);
+    }
+
+    public void seatDebug(){
+        System.out.println("Reserved Seats:\n");
+        for(Seat s : this.reservedSeats){
+            System.out.println(s.getSeatNumber() + " " + s.getStatus());
+        }
+
+        System.out.println("Available seats: " + this.availableSeats.size() +"\n");
+
+        System.out.println("Held Seats: " + this.seatHoldCache.cache.size() + "\n");
     }
 }

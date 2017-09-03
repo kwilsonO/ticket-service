@@ -26,21 +26,23 @@ public class SeatHoldCache {
             public SeatHold load(Long seatHoldId) throws Exception {
                 //this should only be called when attempting to retrieve a SeatHold object
                 //that is NOT in the cache. For example if it's removed due to timeout.
-                throw new NoSuchElementException("The SeatHoldRequest with id: " + seatHoldId + " was removed due to expiry.");
+                System.out.println("LOADER CALLED: " + seatHoldId);
+                return null;
             }
         };
 
         RemovalListener<Long, SeatHold> removalListener = new RemovalListener<Long, SeatHold>() {
             public void onRemoval(RemovalNotification<Long, SeatHold> removal) {
+                System.out.println("REMOVAL CALLED: " + removal.getKey());
                 for(Seat s : removal.getValue().getHeldSeats()){
-                    s.setStatus(SeatStatus.AVAILABLE);
                     seatService.addAvailableSeat(s);
+                    cache.invalidate(removal.getKey());
                 }
             }
         };
 
         cache = CacheBuilder.newBuilder()
-                .expireAfterWrite(60, TimeUnit.SECONDS)
+                .expireAfterWrite(5, TimeUnit.SECONDS)
                 .removalListener(removalListener)
                 .build(loader);
     }
@@ -53,8 +55,13 @@ public class SeatHoldCache {
 
         try {
             SeatHold seatHold = cache.get(seatHoldId);
+
+            if(seatHold == null){
+                System.out.println("Cannot reserve seat due to request being expired!");
+                return false;
+            }
+
             for(Seat s : seatHold.getHeldSeats()){
-                s.setStatus(SeatStatus.RESERVED);
                 seatService.addReservedSeat(s);
             }
 
