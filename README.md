@@ -1,6 +1,7 @@
 # ticket-service
 
-##Notes/Thoughts:
+## Notes/Thoughts:
+
 For the seat layout/storage, I went for a simple approach. Lower seat number means better seat. So depending
 on how one chooses to define what a "better" seat is, the seats could be re-mapped without
 changing the logic. Lastly, if more complicated logic was needed to pick the 'best' seat, it would be a 
@@ -23,20 +24,20 @@ the next N best available seats, as well as adding held seats back to the availa
 Then for keeping track of already reserved seats, its a simple synchronized list.
 
 
-##Important:
+## Important:
 
 The refreshSeats() call within getBestAvailableSeats is only there to simplify testing, in a real world environment, 
 it should be able to be removed completely, and let the Guava cache handle evicting expired 
 requests.
 
 
-##TODO:
+## TODO:
 
 * Test coverage expanded greatly, including more and thorough concurrent tests.
 * Benchmarking.
 
 
-###Final thoughts:
+### Final thoughts:
 This all is strongly based on the idea/need for concurrent use of this service. Otherwise, the added complexity in the 
 code as well as runtime really is not worth it.
 
