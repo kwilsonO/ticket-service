@@ -83,7 +83,7 @@ public class SeatHoldCache {
         }
     }
 
-    public void cleanUpCache(){
+    public void refreshSeats(){
         this.cache.cleanUp();
     }
 }

@@ -2,12 +2,10 @@ package service;
 
 import model.Seat;
 import model.SeatHold;
-import model.SeatStatus;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 public class SeatService {
@@ -18,10 +16,10 @@ public class SeatService {
     AtomicInteger seatHoldCounter = new AtomicInteger();
     private static Logger logger = Logger.getLogger("SeatService");
 
-    public SeatService(int totalSeats){
-        availableSeats = new PriorityQueue<Seat>(new SeatComparator());
-        fillAvailableSeats(totalSeats);
-        reservedSeats = new ArrayList<Seat>();
+    public void init(int numSeats){
+        availableSeats = new PriorityQueue<>(new SeatComparator());
+        reservedSeats = new ArrayList<>();
+        fillAvailableSeats(numSeats);
         seatHoldCache = new SeatHoldCache(this);
     }
 
@@ -43,17 +41,17 @@ public class SeatService {
     }
 
     public void addAvailableSeat(Seat s){
-       s.setStatus(SeatStatus.AVAILABLE);
        availableSeats.offer(s);
     }
 
     public void addReservedSeat(Seat s){
-        s.setStatus(SeatStatus.RESERVED);
         reservedSeats.add(s);
     }
 
     public ArrayList<Seat> getBestAvailableSeats(int numSeats){
         ArrayList<Seat> seats = new ArrayList<>(numSeats);
+
+        seatHoldCache.refreshSeats();
 
         while(numSeats-- > 0 && availableSeats.size() > 0){
             seats.add(availableSeats.poll());
@@ -83,7 +81,7 @@ public class SeatService {
     public void seatDebug(){
         logger.info("Reserved Seats:\n");
         for(Seat s : this.reservedSeats){
-            logger.info(s.getSeatNumber() + " " + s.getStatus());
+            logger.info(s.getSeatNumber() + "");
         }
 
         logger.info("Available seats: " + this.availableSeats.size() +"\n");

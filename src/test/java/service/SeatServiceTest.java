@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 public class SeatServiceTest {
 
     private static Logger logger = Logger.getLogger("SeatServiceTest");
-    SeatService seatService = new SeatService(500);
+    SeatService seatService = new SeatService();
 
 
     @Test
@@ -59,8 +59,9 @@ public class SeatServiceTest {
             seatService.seatDebug();
             SeatHold seatHold = seatService.findAndHoldSeats(10, "superduper");
             seatService.seatDebug();
-            Thread.sleep(5000);
+            //Thread.sleep(5000);
             SeatHold seatHold1 = seatService.findAndHoldSeats(25, "yay");
+            seatService.seatDebug();
             seatService.seatDebug();
         }catch (Exception e){
             logger.info(e.getMessage());

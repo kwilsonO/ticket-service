@@ -6,7 +6,7 @@ import org.junit.Test;
 
 public class TicketServiceTest {
 
-    TicketServiceManager ticketServiceManager = new TicketServiceManager();
+    TicketServiceManager ticketServiceManager = new TicketServiceManager(500);
 
     @Test
     public void testTicketService(){
