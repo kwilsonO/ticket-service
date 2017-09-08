@@ -23,7 +23,7 @@ public class SeatService {
         seatHoldCache = new SeatHoldCache(this);
     }
 
-    public void fillAvailableSeats(int totalSeats){
+    private void fillAvailableSeats(int totalSeats){
 
         for(int i = 1; i <= totalSeats; i++){
             availableSeats.add(
@@ -51,6 +51,7 @@ public class SeatService {
     public ArrayList<Seat> getBestAvailableSeats(int numSeats){
         ArrayList<Seat> seats = new ArrayList<>(numSeats);
 
+        //this should be removable with high throughput
         seatHoldCache.refreshSeats();
 
         while(numSeats-- > 0 && availableSeats.size() > 0){

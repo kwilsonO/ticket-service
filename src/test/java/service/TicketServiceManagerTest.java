@@ -50,5 +50,14 @@ public class TicketServiceManagerTest {
 
         ticketServiceManager = new TicketServiceManager(500);
 
+        SeatHold seatHold = ticketServiceManager.findAndHoldSeats(100, "superb");
+
+        assert(seatHold.getHeldSeats().size() == 100);
+        assert(ticketServiceManager.numSeatsAvailable() == 400);
+
+        ticketServiceManager.reserveSeats(seatHold.getSeatHoldId(), "superb");
+
+        assert(ticketServiceManager.numSeatsAvailable() == 400);
+
     }
 }
