@@ -31,14 +31,24 @@ public class SeatHoldCacheTest {
 
         try {
             SeatHold seatHold1 = seatService.findAndHoldSeats(2, "kwilson");
+
+            seatService.seatDebug();
+
             SeatHold seatHold2 = seatService.findAndHoldSeats(1, "superduper");
 
             seatService.seatDebug();
 
-            Thread.sleep(6000);
-            seatHoldCache.cache.cleanUp();
             SeatHold seatHold3 = seatService.findAndHoldSeats(3, "yay");
 
+            seatService.seatDebug();
+
+            seatService.reserveSeat((int)seatHold1.getSeatHoldId());
+
+            seatHoldCache.cache.invalidateAll();
+
+            seatService.findAndHoldSeats(1, "ddd");
+            seatService.findAndHoldSeats(1, "ddd");
+            seatService.findAndHoldSeats(1, "ddd");
             seatService.seatDebug();
 
         } catch(Exception e){

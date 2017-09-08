@@ -85,6 +85,6 @@ public class SeatService {
 
         System.out.println("Available seats: " + this.availableSeats.size() +"\n");
 
-        System.out.println("Held Seats: " + this.seatHoldCache.cache.size() + "\n");
+        System.out.println("HoldSeat requests: " + this.seatHoldCache.cache.size() + "\n");
     }
 }

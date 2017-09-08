@@ -21,30 +21,34 @@ public class SeatHoldCache {
 
         seatService = service;
 
+        CacheBuilder builder=CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.SECONDS).removalListener(
+                new RemovalListener(){
+                    {
+                        System.out.println("Removal Listener created");
+                    }
+                    public void onRemoval(RemovalNotification notification) {
+                        System.out.println("Going to remove data from InputDataPool");
+                        System.out.println("Following data is being removed:"+notification.getKey());
+                        if(notification.getCause()==RemovalCause.EXPIRED)
+                        {
+                            System.out.println("This data expired:"+notification.getKey());
+                        }else
+                        {
+                            System.out.println("This data didn't expired but evacuated intentionally"+notification.getKey());
+                        }
 
-        CacheLoader<Long, SeatHold> loader = new CacheLoader<Long, SeatHold> () {
-            public SeatHold load(Long seatHoldId) throws Exception {
+                    }}
+        );
+
+        cache = builder.build(new CacheLoader() {
+            @Override
+            public Object load(Object o) throws Exception {
                 //this should only be called when attempting to retrieve a SeatHold object
                 //that is NOT in the cache. For example if it's removed due to timeout.
-                System.out.println("LOADER CALLED: " + seatHoldId);
+                System.out.println("LOADER CALLED: ");
                 return null;
             }
-        };
-
-        RemovalListener<Long, SeatHold> removalListener = new RemovalListener<Long, SeatHold>() {
-            public void onRemoval(RemovalNotification<Long, SeatHold> removal) {
-                System.out.println("REMOVAL CALLED: " + removal.getKey());
-                for(Seat s : removal.getValue().getHeldSeats()){
-                    seatService.addAvailableSeat(s);
-                    cache.invalidate(removal.getKey());
-                }
-            }
-        };
-
-        cache = CacheBuilder.newBuilder()
-                .expireAfterWrite(5, TimeUnit.SECONDS)
-                .removalListener(removalListener)
-                .build(loader);
+        });
     }
 
     public void holdSeats(SeatHold seatHold){
@@ -65,6 +69,7 @@ public class SeatHoldCache {
                 seatService.addReservedSeat(s);
             }
 
+            cache.invalidate(new Long(seatHoldId));
             return true;
 
         } catch(ExecutionException ee){
