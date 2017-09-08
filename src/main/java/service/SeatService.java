@@ -78,6 +78,11 @@ public class SeatService {
                 getBestAvailableSeats(numSeats)
         );
 
+        logger.info("SeatHold #" + seatHold.getSeatHoldId());
+        for(Seat s : seatHold.getHeldSeats()){
+            logger.info(s.getSeatNumber() + "");
+        }
+
         seatHoldCache.holdSeats(seatHold);
 
         return seatHold;

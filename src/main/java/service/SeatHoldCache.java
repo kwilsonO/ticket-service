@@ -20,16 +20,11 @@ public class SeatHoldCache {
 
         CacheBuilder builder=CacheBuilder.newBuilder().expireAfterWrite(2, TimeUnit.SECONDS).removalListener(
                 new RemovalListener(){
-                    {
-                        logger.info("Removal Listener created");
-                    }
                     public void onRemoval(RemovalNotification notification) {
-                        logger.info("Going to remove data from InputDataPool");
-                        logger.info("Following data is being removed:"+notification.getKey());
+                        SeatHold seatHold = (SeatHold) notification.getValue();
                         if(notification.getCause()==RemovalCause.EXPIRED)
                         {
                             logger.info("This data expired:"+notification.getKey());
-                            SeatHold seatHold = (SeatHold) notification.getValue();
 
                             logger.info("Returning " + seatHold.getHeldSeats().size() + " to available seats");
 
@@ -39,7 +34,11 @@ public class SeatHoldCache {
 
                         }else
                         {
-                            logger.info("This data didn't expired but evacuated intentionally"+notification.getKey());
+                            logger.info("This seat hold req was confirmed "+notification.getKey());
+                            for(Seat s : seatHold.getHeldSeats()){
+                                seatService.addReservedSeat(s);
+                            }
+
                         }
 
                     }}
@@ -66,12 +65,8 @@ public class SeatHoldCache {
             SeatHold seatHold = cache.get(seatHoldId);
 
             if(seatHold == null){
-                logger.info("Cannot reserve seat due to request being expired!");
+                logger.info("Cannot reserve seat due to request being expired or non-existent!");
                 return false;
-            }
-
-            for(Seat s : seatHold.getHeldSeats()){
-                seatService.addReservedSeat(s);
             }
 
             cache.invalidate(seatHoldId);
