@@ -5,23 +5,24 @@ import org.junit.Test;
 
 import java.util.NoSuchElementException;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Logger;
 
 public class SeatHoldCacheTest {
 
+    private static Logger logger = Logger.getLogger("SeatHoldCacheTest");
     SeatService seatService = new SeatService(20);
-    SeatHoldCache seatHoldCache = new SeatHoldCache(seatService);
 
     @Test(expected = Exception.class)
     public void getNonExistentSeatHoldIdTest(){
 
         try {
-            seatHoldCache.cache.get(1l);
+            seatService.seatHoldCache.cache.get(1);
             assert(false);
         } catch (NoSuchElementException nse){
-            System.out.println(nse.getMessage());
+            logger.info(nse.getMessage());
             assert(true);
         } catch (ExecutionException e){
-            System.out.println(e.getMessage());
+            logger.info(e.getMessage());
             assert(false);
         }
     }
@@ -30,29 +31,9 @@ public class SeatHoldCacheTest {
     public void testRetrievalOfExpiredRequest(){
 
         try {
-            SeatHold seatHold1 = seatService.findAndHoldSeats(2, "kwilson");
-
-            seatService.seatDebug();
-
-            SeatHold seatHold2 = seatService.findAndHoldSeats(1, "superduper");
-
-            seatService.seatDebug();
-
-            SeatHold seatHold3 = seatService.findAndHoldSeats(3, "yay");
-
-            seatService.seatDebug();
-
-            seatService.reserveSeat((int)seatHold1.getSeatHoldId());
-
-            seatHoldCache.cache.invalidateAll();
-
-            seatService.findAndHoldSeats(1, "ddd");
-            seatService.findAndHoldSeats(1, "ddd");
-            seatService.findAndHoldSeats(1, "ddd");
-            seatService.seatDebug();
 
         } catch(Exception e){
-            System.out.println(e.getMessage());
+            logger.info(e.getMessage());
         }
 
     }

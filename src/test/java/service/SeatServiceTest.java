@@ -5,9 +5,11 @@ import model.SeatHold;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class SeatServiceTest {
 
+    private static Logger logger = Logger.getLogger("SeatServiceTest");
     SeatService seatService = new SeatService(500);
 
 
@@ -42,10 +44,26 @@ public class SeatServiceTest {
 
         assert(seatService.getNumAvailableSeats() == 475);
 
-        assert(seatService.reserveSeat((int)seatHold.getSeatHoldId()));
+        assert(seatService.reserveSeat(seatHold.getSeatHoldId()));
 
         assert(seatService.getNumReservedSeats() == 25);
 
         assert(seatService.getNumAvailableSeats() == 475);
+    }
+
+    @Test
+    public void testHoldRequestExpired(){
+
+        try {
+
+            seatService.seatDebug();
+            SeatHold seatHold = seatService.findAndHoldSeats(10, "superduper");
+            seatService.seatDebug();
+            Thread.sleep(5000);
+            SeatHold seatHold1 = seatService.findAndHoldSeats(25, "yay");
+            seatService.seatDebug();
+        }catch (Exception e){
+            logger.info(e.getMessage());
+        }
     }
 }

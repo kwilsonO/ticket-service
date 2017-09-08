@@ -6,14 +6,17 @@ import model.SeatStatus;
 
 import java.util.ArrayList;
 import java.util.PriorityQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Logger;
 
 public class SeatService {
 
     ArrayList<Seat> reservedSeats;
     PriorityQueue<Seat> availableSeats;
     SeatHoldCache seatHoldCache;
-    AtomicLong seatHoldCounter = new AtomicLong();
+    AtomicInteger seatHoldCounter = new AtomicInteger();
+    private static Logger logger = Logger.getLogger("SeatService");
 
     public SeatService(int totalSeats){
         availableSeats = new PriorityQueue<Seat>(new SeatComparator());
@@ -78,13 +81,13 @@ public class SeatService {
     }
 
     public void seatDebug(){
-        System.out.println("Reserved Seats:\n");
+        logger.info("Reserved Seats:\n");
         for(Seat s : this.reservedSeats){
-            System.out.println(s.getSeatNumber() + " " + s.getStatus());
+            logger.info(s.getSeatNumber() + " " + s.getStatus());
         }
 
-        System.out.println("Available seats: " + this.availableSeats.size() +"\n");
+        logger.info("Available seats: " + this.availableSeats.size() +"\n");
 
-        System.out.println("HoldSeat requests: " + this.seatHoldCache.cache.size() + "\n");
+        logger.info("HoldSeat requests: " + this.seatHoldCache.cache.size() + "\n");
     }
 }
