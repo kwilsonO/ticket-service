@@ -30,6 +30,14 @@ The refreshSeats() call within getBestAvailableSeats is only there to simplify t
 it should be able to be removed completely, and let the Guava cache handle evicting expired 
 requests.
 
+## Building/Running:
+
+Uses maven so a quick:
+    
+    mvn package
+    
+will get the deps, build, and run the tests.
+
 
 ## TODO:
 
