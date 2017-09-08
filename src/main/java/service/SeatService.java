@@ -60,7 +60,7 @@ public class SeatService {
         //since we are using a thread safe blocking queue,
         //if we attempt to poll the PQ and it's empty it'll
         //block until there is data. This will be only rare
-        //cases but there should be a check added somewhere
+        //race condition cases, should be a check added somewhere
         //which checks if all seats have been reserved and if
         //so will stop threads from waiting.
         while(availableSeats.size() > 0 && numSeats-- > 0){
