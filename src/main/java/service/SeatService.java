@@ -4,21 +4,23 @@ import model.Seat;
 import model.SeatHold;
 
 import java.util.ArrayList;
-import java.util.PriorityQueue;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 public class SeatService {
 
-    ArrayList<Seat> reservedSeats;
-    PriorityQueue<Seat> availableSeats;
+    List<Seat> reservedSeats;
+    PriorityBlockingQueue<Seat> availableSeats;
     SeatHoldCache seatHoldCache;
     AtomicInteger seatHoldCounter = new AtomicInteger();
     private static Logger logger = Logger.getLogger("SeatService");
 
     public void init(int numSeats){
-        availableSeats = new PriorityQueue<>(new SeatComparator());
-        reservedSeats = new ArrayList<>();
+        availableSeats = new PriorityBlockingQueue<Seat>(numSeats, new SeatComparator());
+        reservedSeats = Collections.synchronizedList(new ArrayList<Seat>());
         fillAvailableSeats(numSeats);
         seatHoldCache = new SeatHoldCache(this);
     }
@@ -54,7 +56,14 @@ public class SeatService {
         //this should be removable with high throughput
         seatHoldCache.refreshSeats();
 
-        while(numSeats-- > 0 && availableSeats.size() > 0){
+        //this first condition is actually very important
+        //since we are using a thread safe blocking queue,
+        //if we attempt to poll the PQ and it's empty it'll
+        //block until there is data. This will be only rare
+        //cases but there should be a check added somewhere
+        //which checks if all seats have been reserved and if
+        //so will stop threads from waiting.
+        while(availableSeats.size() > 0 && numSeats-- > 0){
             seats.add(availableSeats.poll());
         }
 

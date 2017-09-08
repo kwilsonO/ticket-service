@@ -18,9 +18,6 @@ public class TicketServiceManagerTest {
 
         assert(ticketServiceManager.numSeatsAvailable() == 400);
 
-        ticketServiceManager = new TicketServiceManager(0);
-
-        assert(ticketServiceManager.numSeatsAvailable() == 0);
     }
 
     @Test

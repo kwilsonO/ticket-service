@@ -8,13 +8,6 @@ public class TicketServiceManager implements TicketService {
 
     public TicketServiceManager(int numSeats){
         seatService = new SeatService();
-
-        //just a basic check, make sure we dont try and make a service handling
-        //a negative amount of seats.
-        if(numSeats < 0){
-            numSeats = 0;
-        }
-
         seatService.init(numSeats);
     }
 
